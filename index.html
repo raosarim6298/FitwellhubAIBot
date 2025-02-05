@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Medical Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #chatbox {
+            width: 400px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        #messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            border-bottom: 1px solid #ddd;
+        }
+        #user-input {
+            display: flex;
+            border-top: 1px solid #ddd;
+        }
+        #user-input input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            outline: none;
+        }
+        #user-input button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #user-input button:hover {
+            background: #0056b3;
+        }
+        .message {
+            margin-bottom: 15px;
+        }
+        .message.user {
+            text-align: right;
+        }
+        .message.bot {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div id="chatbox">
+        <div id="messages"></div>
+        <div id="user-input">
+            <input type="text" id="input" placeholder="Ask me a medical question...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('input');
+            const userMessage = input.value.trim();
+            if (!userMessage) return;
+
+            // Display user message
+            const messages = document.getElementById('messages');
+            messages.innerHTML += `<div class="message user">You: ${userMessage}</div>`;
+            input.value = '';
+
+            // Fetch bot response
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: userMessage })
+            });
+            const data = await response.json();
+
+            // Display bot response
+            messages.innerHTML += `<div class="message bot">AI Doctor: ${data.reply}</div>`;
+            messages.scrollTop = messages.scrollHeight;
+        }
+    </script>
+</body>
+</html>
